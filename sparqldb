@@ -1,0 +1,65 @@
+#!/usr/bin/env python
+
+import sys
+import dbapi
+
+exit = False
+
+def connect(dsn):
+	return dbapi.connect(uri="http://example.org/testdb/", dsn=dsn)
+
+def execute(cursor, command):
+	try:
+		cursor.execute(command)
+		results = cursor.fetchall()
+		if results:
+			for row in results:
+				print " ", "\t".join([unicode(r) for r in row])
+	except dbapi.ProgrammingError:
+		print "SYNTAX ERROR"
+	
+def usage():
+	print "Usage: sparqldb DATABASE [URL]"
+
+def command_buffer():
+	import readline
+	import os
+	import atexit
+
+	histfile = os.path.join(os.environ["HOME"], ".sparqldbhist")
+	try:
+	    readline.read_history_file(histfile)
+	except IOError:
+	    pass
+	atexit.register(readline.write_history_file, histfile)
+
+	del os, atexit, readline, histfile
+
+if __name__ == "__main__":
+	print "SPARQLdb SQL client v0.1"
+	print "Copyright John C Barstow 2007"
+	print "Licensed under the GPLv2 or later"
+	print
+	if len(sys.argv) < 2:
+		usage()
+		sys.exit()
+
+	db = connect(sys.argv[1])
+	cur = db.cursor()
+	command_buffer()
+	while True:
+		command = raw_input("sparqldb> ")
+		if command == "\q":
+			break;
+		elif command == "\dump":
+			db.dump()
+		elif command == "\dt":
+			tables = db.store.tables
+			k = tables.keys()
+			k.sort()
+		
+			for table in k:
+				print table.split("/")[-1]
+		else:
+			execute(cur, command)
+
