@@ -1,0 +1,24 @@
+SPARQLdb is a SQL database implemented on top of an RDF triplestore. What does this mean?  Instead of writing code to pull RDF data out of your database, you can now pull SQL data out of your triplestore. More importantly, you can use your highly polished SQL-based tools to work with RDF data, with little more than a few CREATE TABLE statements.
+
+Implemented in Python, it exposes the standard database API, comes with a (very) simple command-line client, and bundles a SQL-2003 parser.
+
+SQL SUPPORT
+-----------
+
+SELECT queries are rewritten as SPARQL queries. Only simple comparisons and explicit inner joins are handled, though we should rapidly expand the relevant expressions in the near future.
+
+CREATE TABLE expressions are rewritten as OWL documents, using Ponga Computing's db ontology (the ontology needs to be reworked for a new namespace since the domain is about to expire). XSD types are nominally supported, although some work remains here.
+
+INSERT statements are rewritten as N3 documents. Auto-incrementing primary keys are supported.
+
+DELETE statements are rewritten as SPARQL queries that select the URIs of the appropriate records. The execution phase then loops through and deletes all statements with the appropriate subject.
+
+UPDATE statements are rewritten as SPARQL queries that select the current values of the changed columns. The existing triples are deleted, and an N3 insertion document is generated with the new values.
+
+TODO
+----
+ * Cascading updates and deletes should be supported.
+ * ALTER TABLE statements should change the database ontology.
+ * CREATE TABLE needs to allow aliases for arbitrary urls.
+ * WHERE clauses should allow for url-based properties. Maybe table.<url> syntax? table.<url> = 5 == <table.pk.value> <url> 5 .
+ * WHERE needs to handle far more sophisticated expressions. OR should map to SPARQL UNIONs.
