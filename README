@@ -2,6 +2,15 @@ SPARQLdb is a SQL database implemented on top of an RDF triplestore. What does t
 
 Implemented in Python, it exposes the standard database API, comes with a (very) simple command-line client, and bundles a SQL-2003 parser.
 
+LICENSE
+-------
+Licensed under the GPLv2 or later.
+
+PREQUISITES
+-----------
+ * python-pyparsing
+ * python-librdf (Redland python bindings)
+
 SQL SUPPORT
 -----------
 
