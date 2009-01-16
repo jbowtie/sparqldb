@@ -277,8 +277,8 @@ unsigned_literal = realNumber | intNumber | general_literal
 # we'll need to extend this definition in two ways:
 #   allow for quoted identifiers (is this *really* needed?)
 #   allow for URI identifiers (for use with O/R mappers that recognise this backend)
-extended_uri_id = Combine(Literal("<") + Word(alphanums + ":/$_-") + Literal(">"))
-identifier = Word( alphas, alphanums + "_$" ).setName("identifier") | extended_uri_id
+#extended_uri_id = Combine(Literal("<") + Word(alphanums + ":/$_-") + Literal(">"))
+identifier = Word( alphas, alphanums + "_$" ).setName("identifier") #| extended_uri_id
 identifier_chain = delimitedList(identifier, ".", combine=True)
 column_reference = identifier_chain.setName("column_reference")
 
