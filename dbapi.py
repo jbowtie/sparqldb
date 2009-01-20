@@ -22,7 +22,7 @@ threadstyle = 0 #at least until we test thread safety...
 
 #exception hierarchy defined by PEP
 class Error(exceptions.StandardError):
-	pass
+    pass
 
 class Warning(exceptions.StandardError):
 	pass
@@ -31,7 +31,7 @@ class InterfaceError(Error):
 	pass
 
 class DatabaseError(Error):
-	pass
+    pass
 
 class InternalError(DatabaseError):
 	pass
@@ -40,7 +40,8 @@ class OperationalError(DatabaseError):
 	pass
 
 class ProgrammingError(DatabaseError):
-	pass
+	def __init__(self, msg, **kwargs):
+        DatabaseError.__init__(self, msg)
 
 class IntegrityError(DatabaseError):
 	pass
