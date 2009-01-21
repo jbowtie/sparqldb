@@ -1,10 +1,7 @@
 #! /usr/bin/env python
 import sys, os.path
 
-srcdir = os.path.abspath("..")
-sys.path.append(srcdir)
-
-import dbapi
+from sparqldb import dbapi
 import unittest
 
 test_create_table_syntax = """CREATE TABLE survey (

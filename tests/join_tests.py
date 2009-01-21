@@ -2,7 +2,7 @@
 import sys, os.path
 
 from sparqldb import dbapi
-import unittest, testdb
+import unittest
 
 test_create_user_table = """CREATE TABLE account (
     id serial NOT NULL PRIMARY KEY,
@@ -29,7 +29,7 @@ test_insert_saving_B = "INSERT INTO tx(id, account, amount) VALUES(6, 2, 250)"
 
 test_select_predicate_join = "SELECT name, tx.amount FROM account, tx WHERE tx.account = account.id"
 
-class joinSuite(testdb.dbTestCase):
+class joinSuite(unittest.TestCase):
 	def setUp(self):
 		#create, insert three records
 		self.conn = dbapi.connect(uri="http://example.org/testdb/", create=True)
