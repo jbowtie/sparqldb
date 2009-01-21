@@ -11,6 +11,10 @@ PREQUISITES
  * python-pyparsing
  * python-librdf (Redland python bindings)
 
+RUNNING TESTS
+-------------
+If you have python-nose installed, you can run the testsuite using 'nosetests tests/*.py'
+
 SQL SUPPORT
 -----------
 
