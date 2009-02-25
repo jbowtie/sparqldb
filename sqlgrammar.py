@@ -277,8 +277,11 @@ unsigned_literal = realNumber | intNumber | general_literal
 # we'll need to extend this definition in two ways:
 #   allow for quoted identifiers (is this *really* needed?)
 #   allow for URI identifiers (for use with O/R mappers that recognise this backend)
-#extended_uri_id = Combine(Literal("<") + Word(alphanums + ":/$_-") + Literal(">"))
-identifier = Word( alphas, alphanums + "_$" ).setName("identifier") #| extended_uri_id
+#extended_uri_id = Literal("<") + Word(alphas, alphanums + ":/$_-.") + Literal(">")
+extended_uri_id = QuotedString("<",  endQuoteChar=">") 
+_standard_identifier = Word( alphas, alphanums + "_$" )
+_sql_identifier = _standard_identifier | extended_uri_id
+identifier = _sql_identifier.setName("identifier") #| extended_uri_id
 identifier_chain = delimitedList(identifier, ".", combine=True)
 column_reference = identifier_chain.setName("column_reference")
 
@@ -297,13 +300,13 @@ value_expression << common_value_expression | boolean_value_expression | row_val
 rvp = value_expression_primary_nopara #| row_value_constructor_predicand
 
 #column names
-column_alias = Combine(identifier).setResultsName("column_alias")
-column_name = Combine(identifier).setResultsName("column_name")
+column_alias = identifier.setResultsName("column_alias")
+column_name = identifier.setResultsName("column_name")
 derived_column = Group(Combine(value_expression) + Optional( Suppress(AS) + column_alias ))
 select_sublist = derived_column #| qualified_asterisk
 
 #tables names
-table_name = Combine(identifier)
+table_name = identifier
 table_alias = identifier
 table_reference = Forward()
 only_spec = ONLY + lpar + table_name + rpar
@@ -410,3 +413,15 @@ delete_statement = Group(DELETE + FROM + target_table + Optional(where_clause)).
 #all supported statements
 sql_statement = (cursor_specification | create_table_statement | insert_statement | update_statement | delete_statement) + Optional(Suppress(";"))
 
+
+if __name__=="__main__":
+    print identifier.parseString("foo")
+    print identifier.parseString("<http://foo.com>")
+    print table_name.parseString("foo")
+    print target_table.parseString("foo")
+    print target_table.parseString("<http://foo.com>")
+    print delete_statement.parseString("DELETE FROM foo")
+    print create_table_statement.parseString("CREATE TABLE foo (bar)")
+    print insert_statement.parseString("INSERT INTO survey (id, user_id, question_id, freetext_answer) VALUES (1, 4, 9, 'foo')")
+    print sql_statement.parseString("insert into foo (bar) values (1);")
+    print sql_statement.parseString("select survey.user_id, survey.freetext_answer as answer from survey order by user_id limit 1")
