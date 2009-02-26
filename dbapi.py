@@ -80,8 +80,11 @@ class datastore:
     def select(self, query):
         '''Execute a SPARQL query.'''
         #raise exception if store closed!
-        q = RDF.SPARQLQuery(query)
-        return q.execute(self.store)
+        try:
+            q = RDF.SPARQLQuery(str(query))
+            return q.execute(self.store)
+        except:
+            print "Problem: ", query
 
 	def insert_triples(self, query):
 	    '''Insert new triples into the default graph.'''
